@@ -319,7 +319,7 @@ function applyTheme() {
   if (toggle) {
     toggle.innerHTML = '<i data-lucide="' + (dark ? 'sun' : 'moon') + '"></i>';
 if (window.lucide) lucide.createIcons();
-window.addEventListener('DOMContentLoaded', () => { if (window.lucide) lucide.createIcons(); });
+
   }
 }
 
@@ -532,9 +532,11 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
   applyTheme();
 });
 
+function initLucide(){ if (window.lucide) { lucide.createIcons(); } else { setTimeout(initLucide, 50); } }
 applyTheme();
 translate();
-if (window.lucide) lucide.createIcons();
+initLucide();
+window.addEventListener('DOMContentLoaded', initLucide);
 </script>
 </body>
 </html>
