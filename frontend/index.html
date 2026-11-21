@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1a0f14">
+<meta name="description" content="Для неё — маленький опросник">
+<title>Для неё · опросник</title>
+<style>
+@font-face{font-family:'Balsamiq Sans';font-style:normal;font-weight:400;font-display:swap;src:url('assets/BalsamiqSans-Regular.ttf') format('truetype')}
+@font-face{font-family:'Balsamiq Sans';font-style:normal;font-weight:700;font-display:swap;src:url('assets/BalsamiqSans-Bold.ttf') format('truetype')}
+@font-face{font-family:'Balsamiq Sans';font-style:italic;font-weight:400;font-display:swap;src:url('assets/BalsamiqSans-Italic.ttf') format('truetype')}
+@font-face{font-family:'Balsamiq Sans';font-style:italic;font-weight:700;font-display:swap;src:url('assets/BalsamiqSans-BoldItalic.ttf') format('truetype')}
+
+:root{
+  --ease:cubic-bezier(.2,0,0,1);--ease-dec:cubic-bezier(.05,.7,.1,1);--spring:cubic-bezier(.34,1.56,.64,1);
+  --r-xl:28px;--r-lg:20px;--r-md:12px;--r-sm:8px;
+  --elev-1:0 1px 2px #0002,0 1px 3px 1px #0001;--elev-2:0 2px 6px #0002,0 8px 22px #0002;--elev-3:0 6px 18px #0003,0 16px 42px #0003;
+  --bg:#faf6f8;--on:#1a1116;--surface:#ffffff;--surface-high:#f2e9ed;--primary:#b3265a;--on-primary:#ffffff;--primary-container:#ffd9e2;--on-primary-container:#3e0018;--secondary-container:#f0dde3;--on-secondary-container:#2b1519;--tertiary:#7c5260;--on-tertiary:#ffffff;--tertiary-container:#ffd9e2;--on-tertiary-container:#31101d;--muted:#5a4a50;--outline:#d8c2c9;--error:#ba1a1a;--scrim:rgba(0,0,0,.32);
+  font-family:'Balsamiq Sans',sans-serif;
+}
+[data-theme='dark']{
+  --bg:#1a0f14;--on:#f2dde3;--surface:#23141b;--surface-high:#2e1a23;--primary:#ffb1c8;--on-primary:#660032;--primary-container:#8f0048;--on-primary-container:#ffd9e2;--secondary-container:#4a2530;--on-secondary-container:#f0dde3;--tertiary:#f0b7c9;--on-tertiary:#4a2530;--tertiary-container:#633b48;--on-tertiary-container:#ffd9e2;--muted:#b8a4ab;--outline:#5a4048;--error:#ffb4ab;--scrim:rgba(0,0,0,.62);
+}
+@media (prefers-color-scheme: light){ :root:not([data-theme]) { } }
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--on);font-family:'Balsamiq Sans',sans-serif;transition:background .4s var(--ease),color .4s var(--ease);min-height:100vh;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--primary);outline-offset:3px}
+
+.app{max-width:520px;margin:0 auto;padding:16px 16px 40px;min-height:100vh;display:flex;flex-direction:column}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0 16px}
+.brand{font-weight:700;font-size:20px;letter-spacing:-.5px}
+.brand em{font-style:normal;color:var(--primary)}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.icon-btn{width:40px;height:40px;border-radius:50%;background:var(--surface-high);color:var(--on);display:grid;place-items:center;font-size:18px;transition:transform .4s var(--spring),background .3s}
+.icon-btn:hover{background:var(--primary-container);color:var(--on-primary-container)}
+.dropdown{position:relative}
+.dropdown-trigger{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:100px;background:var(--surface-high);color:var(--on);font-size:13px;font-weight:600}
+.dropdown-menu{position:absolute;right:0;top:calc(100% + 6px);background:var(--surface-high);border:1px solid var(--outline);border-radius:16px;padding:6px;display:none;flex-direction:column;gap:2px;box-shadow:var(--elev-3);z-index:50;min-width:140px}
+.dropdown-menu.open{display:flex}
+.dropdown-option{padding:8px 12px;border-radius:8px;text-align:left;font-size:13px;font-weight:600;color:var(--on)}
+.dropdown-option:hover{background:var(--secondary-container);color:var(--on-secondary-container)}
+.dropdown-option.selected{background:var(--primary-container);color:var(--on-primary-container)}
+
+.progress-wrap{margin:4px 0 16px}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600}
+.progress-track{height:6px;border-radius:6px;background:var(--surface-high);overflow:hidden}
+.progress-fill{height:100%;border-radius:6px;background:var(--primary);transition:width .4s var(--ease)}
+
+.screen{display:none;flex-direction:column;gap:16px;animation:fade-in .35s var(--ease-dec)}
+.screen.active{display:flex}
+@keyframes fade-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.card{background:var(--surface);border:1px solid var(--outline);border-radius:var(--r-xl);padding:24px 20px;box-shadow:var(--elev-2);transition:background .4s,color .4s,border-color .4s}
+.q-title{font-size:22px;font-weight:700;letter-spacing:-.3px;margin:0 0 6px}
+.q-hint{font-size:13px;color:var(--muted);margin:0 0 18px}
+
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:13px;font-weight:700;color:var(--muted)}
+.input,.textarea{width:100%;padding:14px 16px;border-radius:var(--r-md);border:1px solid var(--outline);background:var(--surface-high);color:var(--on);font-size:15px;transition:border-color .2s,background .3s}
+.input:focus,.textarea:focus{border-color:var(--primary);outline:none}
+.textarea{min-height:100px;resize:vertical;font-family:inherit}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:10px 16px;border-radius:100px;border:1px solid var(--outline);background:var(--surface-high);color:var(--on);font-size:14px;font-weight:600;transition:all .25s var(--spring)}
+.chip:hover{background:var(--secondary-container);color:var(--on-secondary-container)}
+.chip.selected{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+
+.color-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.swatch{width:44px;height:44px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:transform .3s var(--spring),border-color .2s;box-shadow:var(--elev-1)}
+.swatch:hover{transform:scale(1.1)}
+.swatch.selected{border-color:var(--on)}
+.color-picker{width:44px;height:44px;border-radius:50%;border:2px solid var(--outline);padding:2px;cursor:pointer;background:var(--surface-high)}
+
+.btn-row{display:flex;gap:10px;justify-content:space-between;margin-top:8px}
+.btn{padding:12px 20px;border-radius:100px;font-size:14px;font-weight:700;transition:transform .25s var(--spring),background .3s,color .3s;flex:1}
+.btn:active{transform:scale(.96)}
+.btn-filled{background:var(--primary);color:var(--on-primary)}
+.btn-filled:hover{filter:brightness(1.08)}
+.btn-tonal{background:var(--primary-container);color:var(--on-primary-container)}
+.btn-outlined{background:transparent;border:1px solid var(--outline);color:var(--on)}
+.btn-text{background:transparent;color:var(--primary);flex:0;padding:12px 14px}
+
+.snackbar{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120%);background:var(--on);color:var(--bg);padding:12px 18px;border-radius:12px;font-size:13px;font-weight:600;box-shadow:var(--elev-3);transition:transform .35s var(--spring);z-index:100;max-width:90vw}
+.snackbar.show{transform:translateX(-50%) translateY(0)}
+
+.final{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;gap:24px;z-index:200;text-align:center;padding:24px}
+.final.show{display:flex}
+.final-text{font-size:clamp(28px,7vw,46px);font-weight:700;letter-spacing:-.5px;color:var(--primary);animation:pop .7s var(--spring)}
+@keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+.final-sub{font-size:15px;color:var(--muted)}
+.hearts{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:199}
+.heart{position:absolute;font-size:24px;animation:fall 3s linear forwards;opacity:.9}
+@keyframes fall{0%{transform:translateY(-10vh) rotate(0);opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+
+.welcome-actions{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.welcome-title{font-size:28px;font-weight:700;letter-spacing:-.5px;margin:0 0 8px}
+.welcome-sub{font-size:15px;color:var(--muted);margin:0 0 20px;line-height:1.5}
+</style>
+</head>
+<body>
+<svg class="sprite" style="display:none" aria-hidden="true">
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.5-8C.5 9.5 2 5 6 5c2 0 3.5 1 6 4 2.5-3 4-4 6-4 4 0 5.5 4.5 3.5 8-2.5 3.6-9.5 8-9.5 8z" fill="currentColor"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="currentColor"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="currentColor"/></symbol>
+</svg>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand">Для <em>неё</em></div>
+    <div class="topbar-actions">
+      <div class="dropdown" data-dropdown="lang">
+        <button class="dropdown-trigger" type="button"><span class="dv">RU</span> ▾</button>
+        <div class="dropdown-menu">
+          <button class="dropdown-option" data-value="ru">Русский</button>
+          <button class="dropdown-option" data-value="en">English</button>
+          <button class="dropdown-option" data-value="uk">Українська</button>
+        </div>
+      </div>
+      <button class="icon-btn" id="theme-toggle" aria-label="theme"><svg width="18" height="18"><use href="#i-moon"/></svg></button>
+    </div>
+  </header>
+
+  <div class="progress-wrap" id="progress-wrap" style="display:none">
+    <div class="progress-label"><span id="progress-text">1 / 9</span><span id="progress-pct">0%</span></div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <main>
+    <section class="screen active" id="screen-welcome">
+      <h1 class="welcome-title" data-i="welcomeTitle">Привет ♡</h1>
+      <p class="welcome-sub" data-i="welcomeSub">Это маленький опросник для тебя. Отвечай как хочешь — мне важно любое. В конце выбери любимый цвет, и весь сайт подстроится под него.</p>
+      <div class="welcome-actions">
+        <button class="btn btn-filled" id="start-btn" data-i="startBtn">Начать</button>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-q">
+      <div class="card">
+        <h2 class="q-title" id="q-title"></h2>
+        <p class="q-hint" id="q-hint"></p>
+        <div id="q-body"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-outlined" id="back-btn" data-i="backBtn">Назад</button>
+        <button class="btn btn-filled" id="next-btn" data-i="nextBtn">Далее</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="snackbar" id="snackbar"></div>
+
+<div class="final" id="final">
+  <div class="final-text" data-i="finalText">Я тебя очень сильно люблю ❤️</div>
+  <div class="final-sub" data-i="finalSub">Спасибо за ответы ♡</div>
+  <button class="btn btn-filled" id="close-final" data-i="closeBtn" style="max-width:200px">Закрыть</button>
+</div>
+<div class="hearts" id="hearts"></div>
+
+<script>
+const translations = {
+    en: {
+      welcomeTitle: 'Hi ♡',
+      welcomeSub: 'A tiny quiz just for you. Answer however you like — every answer matters to me. At the end pick your favorite color and the whole site will match it.',
+      startBtn: 'Start',
+      backBtn: 'Back',
+      nextBtn: 'Next',
+      submitBtn: 'Send',
+      closeBtn: 'Close',
+      finalText: 'I love you so much ❤️',
+      finalSub: 'Thank you for your answers ♡',
+      progressText: 'Question',
+      snackbarErr: 'Could not send. Try again.',
+      snackbarOk: 'Sent ♡',
+      qColorTitle: 'What is your favorite color?',
+      qColorHint: 'Pick any color — the whole interface will adapt to it.',
+      qFoodTitle: 'Favorite dish or cuisine?',
+      qFoodPh: 'e.g. pasta, sushi…',
+      qMovieTitle: 'Favorite movie or series?',
+      qMoviePh: 'e.g. Interstellar…',
+      qMusicTitle: 'Favorite music or artist?',
+      qMusicPh: 'e.g. Lana Del Rey…',
+      qSeasonTitle: 'Favorite season?',
+      qTimeTitle: 'Favorite time of day?',
+      qDateTitle: 'Our perfect date when we finally meet?',
+      qDatePh: 'Tell me everything…',
+      qJoyTitle: 'What makes you happiest?',
+      qJoyPh: 'e.g. hugs, coffee, rain…',
+      qMsgTitle: 'A message for me',
+      qMsgPh: 'Anything you want to say…',
+      optSpring: 'Spring', optSummer: 'Summer', optAutumn: 'Autumn', optWinter: 'Winter',
+      optMorning: 'Morning', optDay: 'Day', optEvening: 'Evening', optNight: 'Night',
+      themeLight: 'Light', themeDark: 'Dark'
+    },
+    ru: {
+      welcomeTitle: 'Привет ♡',
+      welcomeSub: 'Это маленький опросник для тебя. Отвечай как хочешь — мне важно любое. В конце выбери любимый цвет, и весь сайт подстроится под него.',
+      startBtn: 'Начать',
+      backBtn: 'Назад',
+      nextBtn: 'Далее',
+      submitBtn: 'Отправить',
+      closeBtn: 'Закрыть',
+      finalText: 'Я тебя очень сильно люблю ❤️',
+      finalSub: 'Спасибо за ответы ♡',
+      progressText: 'Вопрос',
+      snackbarErr: 'Не отправилось. Попробуй ещё.',
+      snackbarOk: 'Отправлено ♡',
+      qColorTitle: 'Какой у тебя любимый цвет?',
+      qColorHint: 'Нажми на любой цвет — весь интерфейс подстроится под него.',
+      qFoodTitle: 'Любимое блюдо или кухня?',
+      qFoodPh: 'например, паста, суши…',
+      qMovieTitle: 'Любимый фильм или сериал?',
+      qMoviePh: 'например, Интерстеллар…',
+      qMusicTitle: 'Любимая музыка или исполнитель?',
+      qMusicPh: 'например, Лана Дель Рей…',
+      qSeasonTitle: 'Любимое время года?',
+      qTimeTitle: 'Любимое время суток?',
+      qDateTitle: 'Наше идеальное свидание, когда наконец встретимся?',
+      qDatePh: 'Расскажи всё…',
+      qJoyTitle: 'Что тебя больше всего радует?',
+      qJoyPh: 'например, обнимашки, кофе, дождь…',
+      qMsgTitle: 'Сообщение для меня',
+      qMsgPh: 'Всё, что хочешь сказать…',
+      optSpring: 'Весна', optSummer: 'Лето', optAutumn: 'Осень', optWinter: 'Зима',
+      optMorning: 'Утро', optDay: 'День', optEvening: 'Вечер', optNight: 'Ночь',
+      themeLight: 'Светлая', themeDark: 'Тёмная'
+    },
+    uk: {
+      welcomeTitle: 'Привіт ♡',
+      welcomeSub: 'Це маленький опитувальник для тебе. Відповідай як хочеш — мені важливе будь-що. Наприкінці обери улюблений колір, і весь сайт підлаштується під нього.',
+      startBtn: 'Почати',
+      backBtn: 'Назад',
+      nextBtn: 'Далі',
+      submitBtn: 'Надіслати',
+      closeBtn: 'Закрити',
+      finalText: 'Я тебе дуже сильно люблю ❤️',
+      finalSub: 'Дякую за відповіді ♡',
+      progressText: 'Питання',
+      snackbarErr: 'Не надіслалось. Спробуй ще.',
+      snackbarOk: 'Надіслано ♡',
+      qColorTitle: 'Який твій улюблений колір?',
+      qColorHint: 'Натисни на будь-який колір — увесь інтерфейс підлаштується під нього.',
+      qFoodTitle: 'Улюблена страва чи кухня?',
+      qFoodPh: 'наприклад, паста, суші…',
+      qMovieTitle: 'Улюблений фільм або серіал?',
+      qMoviePh: 'наприклад, Інтерстеллар…',
+      qMusicTitle: 'Улюблена музика чи виконавець?',
+      qMusicPh: 'наприклад, Лана Дель Рей…',
+      qSeasonTitle: 'Улюблена пора року?',
+      qTimeTitle: 'Улюблений час доби?',
+      qDateTitle: 'Наше ідеальне побачення, коли нарешті зустрінемось?',
+      qDatePh: 'Розкажи все…',
+      qJoyTitle: 'Що тебе найбільше радує?',
+      qJoyPh: 'наприклад, обійми, кава, дощ…',
+      qMsgTitle: 'Повідомлення для мене',
+      qMsgPh: 'Все, що хочеш сказати…',
+      optSpring: 'Весна', optSummer: 'Літо', optAutumn: 'Осінь', optWinter: 'Зима',
+      optMorning: 'Ранок', optDay: 'День', optEvening: 'Вечір', optNight: 'Ніч',
+      themeLight: 'Світла', themeDark: 'Темна'
+    }
+};
+
+const languageNames = { en: 'English', ru: 'Русский', uk: 'Українська' };
+const store = (k, v) => { try { localStorage.setItem('love-' + k, v); } catch (e) {} };
+const read = (k, d) => { try { return localStorage.getItem('love-' + k) || d; } catch (e) { return d; } };
+
+let lang = read('lang', 'ru');
+if (!translations[lang]) lang = 'ru';
+let mode = read('mode', 'dark');
+if (!['light', 'dark'].includes(mode)) mode = 'dark';
+let hue = parseInt(read('hue', '340'), 10);
+if (isNaN(hue)) hue = 340;
+
+const QUESTIONS = [
+  { id: 'color', type: 'color' },
+  { id: 'food', type: 'text', phKey: 'qFoodPh' },
+  { id: 'movie', type: 'text', phKey: 'qMoviePh' },
+  { id: 'music', type: 'text', phKey: 'qMusicPh' },
+  { id: 'season', type: 'chips', opts: ['optSpring', 'optSummer', 'optAutumn', 'optWinter'] },
+  { id: 'time', type: 'chips', opts: ['optMorning', 'optDay', 'optEvening', 'optNight'] },
+  { id: 'date', type: 'textarea', phKey: 'qDatePh' },
+  { id: 'joy', type: 'text', phKey: 'qJoyPh' },
+  { id: 'msg', type: 'textarea', phKey: 'qMsgPh' }
+];
+
+const Q_TITLE = {
+  color: 'qColorTitle', food: 'qFoodTitle', movie: 'qMovieTitle', music: 'qMusicTitle',
+  season: 'qSeasonTitle', time: 'qTimeTitle', date: 'qDateTitle', joy: 'qJoyTitle', msg: 'qMsgTitle'
+};
+
+const answers = {};
+let step = 0;
+
+const SWATCHES = ['#e53935', '#fb8c00', '#fdd835', '#43a047', '#1e88e5', '#3949ab', '#8e24aa', '#d81b60', '#6d4c41', '#546e7a', '#00acc1', '#7cb342'];
+
+function t(key) { return (translations[lang] && translations[lang][key]) || key; }
+
+function applyTheme() {
+  const dark = mode === 'dark';
+  const h = hue;
+  const vals = dark
+    ? { 'bg': `hsl(${h} 18% 8%)`, 'on': `hsl(${h} 20% 92%)`, 'surface': `hsl(${h} 16% 13%)`, 'surface-high': `hsl(${h} 16% 19%)`, 'primary': `hsl(${h} 70% 78%)`, 'on-primary': `hsl(${h} 80% 16%)`, 'primary-container': `hsl(${h} 55% 26%)`, 'on-primary-container': `hsl(${h} 70% 88%)`, 'secondary-container': `hsl(${h} 14% 24%)`, 'on-secondary-container': `hsl(${h} 20% 86%)`, 'tertiary': `hsl(${(h + 60) % 360} 55% 76%)`, 'on-tertiary': `hsl(${(h + 60) % 360} 50% 16%)`, 'tertiary-container': `hsl(${(h + 60) % 360} 35% 26%)`, 'on-tertiary-container': `hsl(${(h + 60) % 360} 55% 88%)`, 'muted': `hsl(${h} 12% 68%)`, 'outline': `hsl(${h} 14% 28%)`, 'error': '#ffb4ab' }
+    : { 'bg': `hsl(${h} 30% 97%)`, 'on': `hsl(${h} 24% 14%)`, 'surface': `hsl(${h} 30% 94%)`, 'surface-high': `hsl(${h} 26% 89%)`, 'primary': `hsl(${h} 55% 38%)`, 'on-primary': '#ffffff', 'primary-container': `hsl(${h} 60% 88%)`, 'on-primary-container': `hsl(${h} 60% 16%)`, 'secondary-container': `hsl(${h} 22% 86%)`, 'on-secondary-container': `hsl(${h} 24% 20%)`, 'tertiary': `hsl(${(h + 60) % 360} 45% 40%)`, 'on-tertiary': '#ffffff', 'tertiary-container': `hsl(${(h + 60) % 360} 55% 88%)`, 'on-tertiary-container': `hsl(${(h + 60) % 360} 45% 18%)`, 'muted': `hsl(${h} 12% 38%)`, 'outline': `hsl(${h} 16% 78%)`, 'error': '#ba1a1a' };
+  Object.entries(vals).forEach(([k, v]) => document.documentElement.style.setProperty('--' + k, v));
+  document.documentElement.setAttribute('data-theme', mode);
+  document.querySelector('meta[name="theme-color"]').content = dark ? `hsl(${h} 18% 8%)` : `hsl(${h} 30% 97%)`;
+  const toggle = document.getElementById('theme-toggle');
+  if (toggle) toggle.innerHTML = dark ? '<svg width="18" height="18"><use href="#i-sun"/></svg>' : '<svg width="18" height="18"><use href="#i-moon"/></svg>';
+}
+
+function translate() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i]').forEach(el => {
+    const k = el.dataset.i;
+    if (translations[lang][k]) el.textContent = translations[lang][k];
+  });
+  const dv = document.querySelector('.dv');
+  if (dv) dv.textContent = lang.toUpperCase();
+  document.querySelectorAll('[data-dropdown="lang"] .dropdown-option').forEach(o => o.classList.toggle('selected', o.dataset.value === lang));
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[step];
+  document.getElementById('q-title').textContent = t(Q_TITLE[q.id]);
+  const hint = document.getElementById('q-hint');
+  hint.textContent = (q.id === 'color') ? t('qColorHint') : '';
+  hint.style.display = hint.textContent ? 'block' : 'none';
+  const body = document.getElementById('q-body');
+  body.innerHTML = '';
+  if (q.type === 'color') {
+    const row = document.createElement('div');
+    row.className = 'color-row';
+    SWATCHES.forEach(c => {
+      const s = document.createElement('button');
+      s.className = 'swatch' + (answers.color === c ? ' selected' : '');
+      s.style.background = c;
+      s.addEventListener('click', () => { setHueFromHex(c); answers.color = c; renderQuestion(); });
+      row.appendChild(s);
+    });
+    const picker = document.createElement('input');
+    picker.type = 'color';
+    picker.className = 'color-picker';
+    picker.value = answers.color || '#ff6b9d';
+    picker.addEventListener('input', e => { setHueFromHex(e.target.value); answers.color = e.target.value; });
+    row.appendChild(picker);
+    body.appendChild(row);
+  } else if (q.type === 'chips') {
+    const wrap = document.createElement('div');
+    wrap.className = 'chips';
+    q.opts.forEach(ok => {
+      const b = document.createElement('button');
+      b.className = 'chip' + (answers[q.id] === ok ? ' selected' : '');
+      b.textContent = t(ok);
+      b.addEventListener('click', () => { answers[q.id] = ok; renderQuestion(); });
+      wrap.appendChild(b);
+    });
+    body.appendChild(wrap);
+  } else if (q.type === 'textarea') {
+    const ta = document.createElement('textarea');
+    ta.className = 'textarea';
+    ta.placeholder = t(q.phKey);
+    ta.value = answers[q.id] || '';
+    ta.addEventListener('input', e => { answers[q.id] = e.target.value; });
+    body.appendChild(ta);
+  } else {
+    const inp = document.createElement('input');
+    inp.className = 'input';
+    inp.type = 'text';
+    inp.placeholder = t(q.phKey);
+    inp.value = answers[q.id] || '';
+    inp.addEventListener('input', e => { answers[q.id] = e.target.value; });
+    body.appendChild(inp);
+  }
+
+  const back = document.getElementById('back-btn');
+  const next = document.getElementById('next-btn');
+  back.style.visibility = step === 0 ? 'hidden' : 'visible';
+  if (step === QUESTIONS.length - 1) {
+    next.textContent = t('submitBtn');
+  } else {
+    next.textContent = t('nextBtn');
+  }
+
+  const wrap = document.getElementById('progress-wrap');
+  wrap.style.display = 'block';
+  const total = QUESTIONS.length;
+  const pct = Math.round((step / total) * 100);
+  document.getElementById('progress-text').textContent = t('progressText') + ' ' + (step + 1) + ' / ' + total;
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+function setHueFromHex(hex) {
+  const { h } = hexToHsl(hex);
+  hue = h;
+  store('hue', hue);
+  applyTheme();
+}
+
+function hexToHsl(hex) {
+  let c = hex.replace('#', '');
+  if (c.length === 3) c = c.split('').map(x => x + x).join('');
+  const r = parseInt(c.slice(0, 2), 16) / 255;
+  const g = parseInt(c.slice(2, 4), 16) / 255;
+  const b = parseInt(c.slice(4, 6), 16) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h = 0, s = 0, l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h *= 60;
+  }
+  return { h: Math.round(h), s, l };
+}
+
+function showSnackbar(msg) {
+  const el = document.getElementById('snackbar');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+function spawnHearts() {
+  const container = document.getElementById('hearts');
+  for (let i = 0; i < 24; i++) {
+    const h = document.createElement('div');
+    h.className = 'heart';
+    h.textContent = Math.random() > 0.5 ? '❤️' : '♡';
+    h.style.left = Math.random() * 100 + 'vw';
+    h.style.animationDelay = (Math.random() * 1.5) + 's';
+    container.appendChild(h);
+    setTimeout(() => h.remove(), 4000);
+  }
+}
+
+async function submit() {
+  const payload = { answers, hue, lang, ts: Date.now() };
+  try {
+    const res = await fetch('/api/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('fail');
+    document.getElementById('final').classList.add('show');
+    spawnHearts();
+    setInterval(spawnHearts, 3000);
+  } catch (e) {
+    showSnackbar(t('snackbarErr'));
+  }
+}
+
+document.getElementById('start-btn').addEventListener('click', () => {
+  step = 0;
+  renderQuestion();
+  showScreen('screen-q');
+});
+
+document.getElementById('back-btn').addEventListener('click', () => {
+  if (step > 0) { step--; renderQuestion(); }
+});
+
+document.getElementById('next-btn').addEventListener('click', () => {
+  const q = QUESTIONS[step];
+  if (q.id === 'color' && !answers.color) { showSnackbar(t('qColorHint')); return; }
+  if (step < QUESTIONS.length - 1) {
+    step++;
+    renderQuestion();
+  } else {
+    submit();
+  }
+});
+
+document.getElementById('close-final').addEventListener('click', () => {
+  document.getElementById('final').classList.remove('show');
+  document.getElementById('hearts').innerHTML = '';
+  step = 0;
+  Object.keys(answers).forEach(k => delete answers[k]);
+  showScreen('screen-welcome');
+  document.getElementById('progress-wrap').style.display = 'none';
+});
+
+const langDropdown = document.querySelector('[data-dropdown="lang"]');
+langDropdown.addEventListener('click', e => {
+  const opt = e.target.closest('.dropdown-option');
+  if (!opt) {
+    langDropdown.querySelector('.dropdown-menu').classList.toggle('open');
+    return;
+  }
+  lang = opt.dataset.value;
+  store('lang', lang);
+  translate();
+  if (document.getElementById('screen-q').classList.contains('active')) renderQuestion();
+  langDropdown.querySelector('.dropdown-menu').classList.remove('open');
+});
+document.addEventListener('click', e => {
+  if (!e.target.closest('[data-dropdown="lang"]')) {
+    const m = langDropdown.querySelector('.dropdown-menu');
+    if (m) m.classList.remove('open');
+  }
+});
+
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  mode = mode === 'dark' ? 'light' : 'dark';
+  store('mode', mode);
+  applyTheme();
+});
+
+applyTheme();
+translate();
+</script>
+</body>
+</html>
